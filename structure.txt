@@ -1,0 +1,43 @@
+src
+├── app
+│   ├── api
+│   │   ├── auth
+│   │   │   └── [...nextauth]
+│   │   └── superadmin
+│   │       ├── business-admins
+│   │       └── businesses
+│   ├── business
+│   │   ├── layout.jsx
+│   │   └── page.jsx
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.js
+│   ├── login
+│   │   └── page.jsx
+│   ├── page.js
+│   └── superadmin
+│       ├── businesses
+│       │   └── page.jsx
+│       ├── layout.jsx
+│       ├── page.jsx
+│       ├── settings
+│       │   └── page.jsx
+│       ├── subscriptions
+│       │   └── page.jsx
+│       └── users
+│           └── page.jsx
+├── components
+│   ├── business
+│   │   └── BusinessSidebar.jsx
+│   ├── forms
+│   │   └── LoginForm.jsx
+│   ├── layout
+│   │   └── SuperAdminSidebar.jsx
+│   └── superadmin
+│       ├── AddBusinessModal.jsx
+│       └── AssignAdminModal.jsx
+└── lib
+    ├── auth.js
+    └── db.js
+
+21 directories, 20 files

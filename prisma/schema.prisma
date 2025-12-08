@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String     @id @default(cuid())
+  name       String?
+  email      String     @unique
+  password   String
+  role       Role       @default(DELIVERY)
+  business   Business?  @relation("BusinessUsers", fields: [businessId], references: [id])
+  businessId String?
+  ownedBusinesses   Business[] @relation("BusinessOwner")
+  deleted   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  active Boolean @default(true)
+
+  updatedAt  DateTime @updatedAt
+}
+
+model Business {
+  id          String   @id @default(cuid())
+  name        String
+  industry    String
+  email       String   @unique
+  phone       String?
+  country     String
+  city        String
+  address     String
+  currency    String
+  logo        String?
+  subscriptionPrice Float? @default(0)
+  subscriptionPlan  String? @default("Basic")
+  active      Boolean  @default(true)
+
+  ownerId     String?
+  owner       User?     @relation("BusinessOwner", fields: [ownerId], references: [id])
+
+  users       User[]   @relation("BusinessUsers")
+
+  
+  deleted Boolean @default(false)
+
+ deletedAt   DateTime?  
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([name])
+}
+
+
+
+
+
+enum Role {
+   SUPER_ADMIN
+  BUSINESS_ADMIN
+  ACCOUNTANT
+  STOREKEEPER
+  CASHIER
+  DELIVERY
+}
