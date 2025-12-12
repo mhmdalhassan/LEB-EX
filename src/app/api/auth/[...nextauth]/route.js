@@ -3,7 +3,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
 
-const handler = NextAuth({
+// ADD THIS — your NextAuth configuration must be exported
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -28,7 +29,9 @@ const handler = NextAuth({
 
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.role = user.role;
+      if (user) {
+        token.role = user.role; // SUPER_ADMIN, BUSINESS_ADMIN, etc.
+      }
       return token;
     },
 
@@ -38,9 +41,6 @@ const handler = NextAuth({
     },
 
     async redirect({ url, baseUrl }) {
-      // Auto redirect based on role
-      if (url === baseUrl + "/api/auth/signin") return baseUrl;
-
       return url;
     },
   },
@@ -48,6 +48,10 @@ const handler = NextAuth({
   pages: {
     signIn: "/auth/login",
   },
-});
+};
 
+// MUST wrap authOptions
+const handler = NextAuth(authOptions);
+
+// Export NextAuth handlers
 export { handler as GET, handler as POST };

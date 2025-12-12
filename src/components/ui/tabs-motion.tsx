@@ -1,12 +1,17 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs-motion";
+import * as React from "react";
+import {
+  Tabs as BaseTabs,
+  TabsList as BaseTabsList,
+  TabsTrigger as BaseTabsTrigger,
+  TabsContent as BaseTabsContent,
+} from "@/components/ui/tabs";
+import { motion, AnimatePresence, type Transition } from "framer-motion";
+import { cn } from "@/lib/utils";
 
-import { motion, AnimatePresence, type Transition, type HTMLMotionProps } from 'framer-motion';
-import { cn } from '@/lib/utils';
-
-type MotionHighlightMode = 'children' | 'parent';
+// Highlight logic
+type MotionHighlightMode = "children" | "parent";
 
 type Bounds = {
   top: number;
@@ -25,7 +30,7 @@ type MotionHighlightContextType<T extends string> = {
   hover: boolean;
   className?: string;
   activeClassName?: string;
-  setActiveClassName: (className: string) => void;
+  setActiveClassName: (cls: string) => void;
   transition?: Transition;
   disabled?: boolean;
   enabled?: boolean;
@@ -33,46 +38,29 @@ type MotionHighlightContextType<T extends string> = {
   forceUpdateBounds?: boolean;
 };
 
-const MotionHighlightContext = React.createContext<
-  MotionHighlightContextType<any> | undefined
->(undefined);
+const MotionHighlightContext =
+  React.createContext<MotionHighlightContextType<any> | undefined>(undefined);
 
 function useMotionHighlight<T extends string>(): MotionHighlightContextType<T> {
   const context = React.useContext(MotionHighlightContext);
   if (!context) {
-    throw new Error(
-      'useMotionHighlight must be used within a MotionHighlightProvider',
-    );
+    throw new Error("useMotionHighlight must be used within a MotionHighlightProvider");
   }
-  return context as unknown as MotionHighlightContextType<T>;
+  return context as MotionHighlightContextType<T>;
 }
 
-type BaseMotionHighlightProps<T extends string> = {
-  mode?: MotionHighlightMode;
+type MotionHighlightProps<T extends string> = React.ComponentProps<"div"> & {
   value?: T | null;
   defaultValue?: T | null;
-  onValueChange?: (value: T | null) => void;
   className?: string;
-  transition?: Transition;
   hover?: boolean;
-  disabled?: boolean;
-  enabled?: boolean;
+  transition?: Transition;
   exitDelay?: number;
-};
-
-type ParentModeMotionHighlightProps = {
   boundsOffset?: Partial<Bounds>;
-  containerClassName?: string;
-  forceUpdateBounds?: boolean;
+  enabled?: boolean;
+  itemsClassName?: string;
+  children: React.ReactNode;
 };
-
-type MotionHighlightProps<T extends string> = React.ComponentProps<'div'> &
-  BaseMotionHighlightProps<T> &
-  Partial<ParentModeMotionHighlightProps> & {
-    controlledItems?: boolean;
-    children: React.ReactNode;
-    itemsClassName?: string;
-  };
 
 const MotionHighlight = React.forwardRef<HTMLDivElement, MotionHighlightProps<any>>(
   (props, ref) => {
@@ -80,18 +68,12 @@ const MotionHighlight = React.forwardRef<HTMLDivElement, MotionHighlightProps<an
       children,
       value,
       defaultValue,
-      onValueChange,
       className,
-      transition = { type: 'spring', stiffness: 350, damping: 35 },
+      transition = { type: "spring", stiffness: 350, damping: 35 },
       hover = false,
       enabled = true,
-      controlledItems = false,
-      disabled = false,
-      exitDelay = 0.2,
-      mode = 'children',
+      exitDelay = 0.15,
       boundsOffset,
-      containerClassName,
-      forceUpdateBounds,
       itemsClassName,
       ...rest
     } = props;
@@ -99,235 +81,153 @@ const MotionHighlight = React.forwardRef<HTMLDivElement, MotionHighlightProps<an
     const localRef = React.useRef<HTMLDivElement>(null);
     React.useImperativeHandle(ref, () => localRef.current as HTMLDivElement);
 
-    const [activeValue, setActiveValue] = React.useState<string | null>(
-      value ?? defaultValue ?? null,
-    );
+    const [activeValue, setActiveValue] = React.useState<string | null>(value ?? defaultValue ?? null);
     const [bounds, setBounds] = React.useState<Bounds | null>(null);
-    const [activeClassName, setActiveClassName] = React.useState('');
-
-    const id = React.useId();
 
     const safeSetBounds = React.useCallback(
       (b: DOMRect) => {
         if (!localRef.current) return;
         const containerRect = localRef.current.getBoundingClientRect();
         const offset = boundsOffset ?? {};
-        const newBounds: Bounds = {
+        setBounds({
           top: b.top - containerRect.top + (offset.top ?? 0),
           left: b.left - containerRect.left + (offset.left ?? 0),
           width: b.width + (offset.width ?? 0),
           height: b.height + (offset.height ?? 0),
-        };
-        setBounds(newBounds);
+        });
       },
-      [boundsOffset],
+      [boundsOffset]
     );
 
-    const clearBounds = () => setBounds(null);
-
-    React.useEffect(() => {
-      if (value !== undefined) setActiveValue(value);
-    }, [value]);
-
     const providerValue = {
-      mode,
+      mode: "children",
       activeValue,
       setActiveValue,
       setBounds: safeSetBounds,
-      clearBounds,
-      id,
+      clearBounds: () => setBounds(null),
+      id: React.useId(),
       hover,
       className,
       transition,
-      disabled,
+      disabled: false,
       enabled,
       exitDelay,
-      activeClassName,
-      setActiveClassName,
-      forceUpdateBounds,
+      activeClassName: "",
+      setActiveClassName: () => {},
+      forceUpdateBounds: false,
     };
 
-    const renderChildren = (childrenToRender: React.ReactNode) =>
-      mode === 'parent' ? (
-        <div
-          ref={localRef}
-          className={cn('relative', containerClassName)}
-          {...rest}
-        >
+    return (
+      <MotionHighlightContext.Provider value={providerValue}>
+        <div ref={localRef} className="relative w-full" {...rest}>
           <AnimatePresence initial={false}>
             {bounds && (
               <motion.div
-                animate={{
-                  top: bounds.top,
-                  left: bounds.left,
-                  width: bounds.width,
-                  height: bounds.height,
-                  opacity: 1,
-                }}
-                initial={{
-                  top: bounds.top,
-                  left: bounds.left,
-                  width: bounds.width,
-                  height: bounds.height,
-                  opacity: 0,
-                }}
+                layoutId="motionHighlight"
+                animate={{ ...bounds, opacity: 1 }}
+                initial={{ ...bounds, opacity: 0 }}
                 exit={{
                   opacity: 0,
                   transition: {
                     ...transition,
-                    delay: (transition?.delay ?? 0) + (exitDelay ?? 0),
+                    delay: (transition?.delay ?? 0) + exitDelay,
                   },
                 }}
                 transition={transition}
-                className={cn(
-                  'absolute bg-muted z-0 rounded-md',
-                  className,
-                  activeClassName,
-                )}
+                className={cn("bg-muted absolute rounded-md z-0", className)}
               />
             )}
           </AnimatePresence>
-          {childrenToRender}
+          {children}
         </div>
-      ) : (
-        childrenToRender
-      );
-
-    return (
-      <MotionHighlightContext.Provider value={providerValue}>
-        {enabled
-          ? controlledItems
-            ? renderChildren(children)
-            : renderChildren(
-                React.Children.map(children, (child: any) =>
-                  React.cloneElement(child, {
-                    className: cn(child.props.className, itemsClassName),
-                  }),
-                ),
-              )
-          : children}
       </MotionHighlightContext.Provider>
     );
-  },
+  }
 );
-MotionHighlight.displayName = 'MotionHighlight';
 
+MotionHighlight.displayName = "MotionHighlight";
+
+// Tabs context
 type TabsContextType<T extends string> = {
   activeValue: T;
   handleValueChange: (value: T) => void;
 };
 
-const TabsContext = React.createContext<TabsContextType<any> | undefined>(
-  undefined,
-);
+const TabsContext = React.createContext<TabsContextType<any> | undefined>(undefined);
 
 export function useTabs<T extends string = string>(): TabsContextType<T> {
   const context = React.useContext(TabsContext);
-  if (!context) throw new Error('Tabs must be inside TabsProvider');
+  if (!context) throw new Error("Tabs must be inside TabsProvider");
   return context;
 }
 
-export type TabsProps<T extends string = string> = {
-  children: React.ReactNode;
-  defaultValue: T;
-  className?: string;
-};
-
+// Motion Tabs main component
 export const Tabs = <T extends string = string>({
   children,
   defaultValue,
   className,
-}: TabsProps<T>) => {
+}: {
+  children: React.ReactNode;
+  defaultValue: T;
+  className?: string;
+}) => {
   const [activeValue, setActiveValue] = React.useState<T>(defaultValue);
 
   return (
-    <TabsContext.Provider
-      value={{ activeValue, handleValueChange: setActiveValue }}
-    >
-      <div className={cn('flex flex-col gap-3', className)}>{children}</div>
+    <TabsContext.Provider value={{ activeValue, handleValueChange: setActiveValue }}>
+      <BaseTabs defaultValue={defaultValue} className={className}>
+        {children}
+      </BaseTabs>
     </TabsContext.Provider>
   );
 };
 
-export const TabsList = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
+// UI Components
+export const TabsList = ({ children, className }: any) => {
   const { activeValue } = useTabs();
-
   return (
-    <MotionHighlight
-      controlledItems
-      className="rounded-lg bg-muted shadow-sm"
-      value={activeValue}
-    >
-      <div
-        role="tablist"
-        className={cn(
-          'inline-flex h-10 items-center justify-center gap-1 rounded-lg bg-muted px-1',
-          className,
-        )}
-      >
+    <MotionHighlight value={activeValue} className="rounded-lg bg-muted shadow-sm">
+      <BaseTabsList className={cn("inline-flex gap-1 px-1 h-10 items-center rounded-lg", className)}>
         {children}
-      </div>
+      </BaseTabsList>
     </MotionHighlight>
   );
 };
 
-export const TabsTrigger = ({
-  value,
-  children,
-  className,
-}: {
-  value: string;
-  children: React.ReactNode;
-  className?: string;
-}) => {
+export const TabsTrigger = ({ value, children, className }: any) => {
   const { activeValue, handleValueChange } = useTabs();
 
   return (
-    <motion.button
-      role="tab"
-      whileTap={{ scale: 0.95 }}
+    <BaseTabsTrigger
+      value={value}
       onClick={() => handleValueChange(value)}
       data-active={activeValue === value}
       className={cn(
-        'relative z-10 h-8 cursor-pointer rounded-md px-3 text-sm font-medium transition-colors',
-        'data-[active=true]:text-black data-[active=false]:text-gray-500',
-        className,
+        "relative z-10 h-8 px-3 text-sm font-medium transition-colors rounded-md",
+        "data-[active=true]:text-black data-[active=false]:text-gray-500",
+        className
       )}
-      data-value={value}
     >
       {children}
-    </motion.button>
+    </BaseTabsTrigger>
   );
 };
 
-export const TabsContent = ({
-  value,
-  children,
-  className,
-}: {
-  value: string;
-  children: React.ReactNode;
-  className?: string;
-}) => {
+export const TabsContent = ({ value, children, className }: any) => {
   const { activeValue } = useTabs();
-  const isActive = activeValue === value;
-
   return (
-    <motion.div
-      role="tabpanel"
-      className={cn('relative', className)}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: isActive ? 1 : 0 }}
-      transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-      hidden={!isActive}
+    <BaseTabsContent
+      value={value}
+      className={cn("relative", className)}
+      hidden={activeValue !== value}
     >
-      {children}
-    </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: activeValue === value ? 1 : 0, y: 0 }}
+        transition={{ type: "spring", stiffness: 200, damping: 25 }}
+      >
+        {children}
+      </motion.div>
+    </BaseTabsContent>
   );
 };

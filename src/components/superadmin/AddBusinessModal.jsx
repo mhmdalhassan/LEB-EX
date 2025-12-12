@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
-export default function AddBusinessModal({ open, onClose, onCreated }) {
-  if (!open) return null;
+export default function AddBusinessModal({ isOpen, onClose, onBusinessAdded }) {
+  if (!isOpen) return null;
 
   const [form, setForm] = useState({
     name: "",
@@ -14,6 +14,11 @@ export default function AddBusinessModal({ open, onClose, onCreated }) {
     city: "",
     address: "",
     currency: "LBP",
+
+    // Admin Fields
+    adminName: "",
+    adminEmail: "",
+    adminPassword: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -25,8 +30,13 @@ export default function AddBusinessModal({ open, onClose, onCreated }) {
   };
 
   const handleSubmit = async () => {
-    if (!form.name.trim() || !form.email.trim()) {
-      setError("Business name and email are required.");
+    if (
+      !form.name.trim() ||
+      !form.email.trim() ||
+      !form.adminEmail.trim() ||
+      !form.adminPassword.trim()
+    ) {
+      setError("Business name, email, admin email & password are required.");
       return;
     }
 
@@ -48,10 +58,8 @@ export default function AddBusinessModal({ open, onClose, onCreated }) {
         return;
       }
 
-      // 🔥 Refresh Business List in parent page
-      if (onCreated) onCreated();
+      if (onBusinessAdded) onBusinessAdded();
 
-      // 🔥 Redirect to Manage Users page for this business
       window.location.href = `/superadmin/businesses/${data.business.id}/users`;
 
     } catch (err) {
@@ -65,12 +73,11 @@ export default function AddBusinessModal({ open, onClose, onCreated }) {
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50 px-4">
       <div className="bg-white rounded-xl shadow-xl w-full max-w-xl p-6 space-y-4">
 
-        {/* 🔹 Modal Header */}
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold">Add New Business</h2>
             <p className="text-xs text-gray-500 mt-1">
-              Create a new business and assign its team members.
+              Create a business and assign its administrator.
             </p>
           </div>
           <button
@@ -82,26 +89,26 @@ export default function AddBusinessModal({ open, onClose, onCreated }) {
           </button>
         </div>
 
-        {/* 🔹 Error Message */}
         {error && (
           <div className="text-sm text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded">
             {error}
           </div>
         )}
 
-        {/* 🔹 Form Fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {/* Column 1 */}
           <div className="space-y-3">
             {[
               { label: "Business Name *", name: "name", placeholder: "Café Beirut" },
               { label: "Email *", name: "email", type: "email", placeholder: "business@email.com" },
-              { label: "Industry", name: "industry", placeholder: "Restaurant, Coffee Shop ..." },
+              { label: "Industry", name: "industry", placeholder: "Restaurant / Coffee Shop" },
+
+              { label: "Admin Name *", name: "adminName", placeholder: "Admin Full Name" },
+              { label: "Admin Email *", name: "adminEmail", type: "email", placeholder: "admin@email.com" },
+              { label: "Admin Password *", name: "adminPassword", type: "password", placeholder: "********" },
             ].map((field) => (
               <div key={field.name}>
-                <label className="text-xs font-medium text-gray-700">
-                  {field.label}
-                </label>
+                <label className="text-xs font-medium text-gray-700">{field.label}</label>
                 <input
                   type={field.type || "text"}
                   name={field.name}
@@ -109,6 +116,7 @@ export default function AddBusinessModal({ open, onClose, onCreated }) {
                   onChange={handleChange}
                   placeholder={field.placeholder}
                   className="mt-1 border border-gray-300 rounded-md w-full px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/60"
+                  required={field.label.includes("*")}
                 />
               </div>
             ))}
@@ -133,9 +141,7 @@ export default function AddBusinessModal({ open, onClose, onCreated }) {
                 { label: "City", name: "city", placeholder: "Beirut" },
               ].map((field) => (
                 <div key={field.name}>
-                  <label className="text-xs font-medium text-gray-700">
-                    {field.label}
-                  </label>
+                  <label className="text-xs font-medium text-gray-700">{field.label}</label>
                   <input
                     name={field.name}
                     value={form[field.name]}
@@ -174,7 +180,6 @@ export default function AddBusinessModal({ open, onClose, onCreated }) {
           </div>
         </div>
 
-        {/* 🔹 Footer Buttons */}
         <div className="pt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
           <button
             onClick={onClose}
@@ -192,7 +197,6 @@ export default function AddBusinessModal({ open, onClose, onCreated }) {
             {loading ? "Creating..." : "Create & Manage Users"}
           </button>
         </div>
-
       </div>
     </div>
   );

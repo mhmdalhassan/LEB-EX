@@ -1,18 +1,26 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 
-export async function PATCH(req, context) {
+export async function PUT(req, { params }) {
   try {
-    const { id } = await context.params;
-    const { subscriptionPrice } = await req.json();
+    const id = params.id;
+    const { subscriptionPrice, subscriptionPlan } = await req.json();
 
-    const business = await prisma.business.update({
+    const updated = await prisma.business.update({
       where: { id },
-      data: { subscriptionPrice: Number(subscriptionPrice) || 0 }
+      data: {
+        subscriptionPrice: parseFloat(subscriptionPrice),
+        subscriptionPlan
+      }
     });
 
-    return NextResponse.json({ success: true, business });
+    return NextResponse.json({ success: true });
+
   } catch (err) {
-    return NextResponse.json({ success: false, message: "Failed to update subscription" });
+    console.error(err);
+    return NextResponse.json(
+      { success: false, message: "Failed to update subscription" },
+      { status: 500 }
+    );
   }
 }

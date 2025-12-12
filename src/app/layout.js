@@ -1,7 +1,7 @@
 import "./globals.css";
 import localFont from "next/font/local";
 import { Toaster } from "sonner";
-
+import SessionWrapper from "@/components/SessionWrapper";
 const geistSans = localFont({
   src: [
     { path: "./fonts/Geist-Thin.woff2", weight: "100", style: "normal" },
@@ -26,12 +26,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} antialiased`}>
-      <Toaster position="top-right" richColors closeButton />
-
-        {children}
-
-        
+      <body
+      
+      className={`${geistSans.variable} antialiased`}>
+       <SessionWrapper>
+          <Toaster position="top-right" richColors closeButton />
+          {children}
+        </SessionWrapper>
       </body>
     </html>
   );

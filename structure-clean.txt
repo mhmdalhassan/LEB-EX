@@ -1,0 +1,151 @@
+src
+├── app
+│   ├── api
+│   │   ├── auth
+│   │   │   └── [...nextauth]
+│   │   │       └── route.js
+│   │   ├── superadmin
+│   │   │   ├── assign-admin
+│   │   │   │   └── route.js
+│   │   │   ├── business-admins
+│   │   │   │   └── route.js
+│   │   │   ├── businesses
+│   │   │   │   ├── assign-admin
+│   │   │   │   │   └── route.js
+│   │   │   │   ├── [id]
+│   │   │   │   │   ├── assign-admin
+│   │   │   │   │   ├── route.js
+│   │   │   │   │   ├── subscription
+│   │   │   │   │   ├── toggle
+│   │   │   │   │   └── users
+│   │   │   │   ├── register
+│   │   │   │   │   └── route.js
+│   │   │   │   ├── route.js
+│   │   │   │   └── update-subscription
+│   │   │   │       └── route.js
+│   │   │   ├── invoices
+│   │   │   │   └── route.js
+│   │   │   ├── subscriptions
+│   │   │   │   ├── analytics
+│   │   │   │   │   └── route.js
+│   │   │   │   ├── pay
+│   │   │   │   │   └── route.js
+│   │   │   │   └── reminders 
+│   │   │   │       └── route.js
+│   │   │   └── users
+│   │   │       ├── [id]
+│   │   │       │   └── route.js
+│   │   │       └── route.js
+│   │   └── system
+│   │       └── check-subscriptions
+│   │           └── route.js
+│   ├── auth
+│   │   └── login
+│   │       └── page.jsx
+│   ├── business
+│   │   ├── analytics
+│   │   │   └── page.jsx
+│   │   ├── bookings
+│   │   │   └── page.jsx
+│   │   ├── dashboard
+│   │   │   └── page.jsx
+│   │   ├── layout.jsx
+│   │   ├── page.jsx
+│   │   ├── points
+│   │   │   └── page.jsx
+│   │   ├── products
+│   │   │   └── page.jsx
+│   │   ├── register
+│   │   │   └── page.jsx
+│   │   ├── rewards
+│   │   │   └── page.jsx
+│   │   ├── settings
+│   │   │   └── page.jsx
+│   │   └── staff
+│   │       └── page.jsx
+│   ├── favicon.ico
+│   ├── fonts
+│   │   ├── Geist-BlackItalic.woff2
+│   │   ├── Geist-Black.woff2
+│   │   ├── Geist-BoldItalic.woff2
+│   │   ├── Geist-Bold.woff2
+│   │   ├── Geist-ExtraBoldItalic.woff2
+│   │   ├── Geist-ExtraBold.woff2
+│   │   ├── Geist-ExtraLightItalic.woff2
+│   │   ├── Geist-ExtraLight.woff2
+│   │   ├── Geist-Italic[wght].woff2
+│   │   ├── Geist-LightItalic.woff2
+│   │   ├── Geist-Light.woff2
+│   │   ├── Geist-MediumItalic.woff2
+│   │   ├── Geist-Medium.woff2
+│   │   ├── Geist-RegularItalic.woff2
+│   │   ├── Geist-Regular.woff2
+│   │   ├── Geist-SemiBoldItalic.woff2
+│   │   ├── Geist-SemiBold.woff2
+│   │   ├── Geist-ThinItalic.woff2
+│   │   ├── Geist-Thin.woff2
+│   │   └── Geist[wght].woff2
+│   ├── globals.css
+│   ├── layout.js
+│   ├── login
+│   │   └── page.jsx
+│   ├── page.js
+│   ├── (public)
+│   │   ├── components
+│   │   │   ├── components
+│   │   │   │   ├── Categories.jsx
+│   │   │   │   ├── SearchBar.jsx
+│   │   │   │   └── ServiceCard.jsx
+│   │   │   ├── FloatingShapes.jsx
+│   │   │   ├── page.jsx
+│   │   │   └── PublicHeader.jsx
+│   │   ├── layout.jsx
+│   │   └── public.css
+│   └── superadmin
+│       ├── AdminLayoutClient.jsx
+│       ├── businesses
+│       │   ├── [id]
+│       │   │   └── users
+│       │   │       ├── add
+│       │   │       └── page.jsx
+│       │   └── page.jsx
+│       ├── invoices
+│       │   └── page.jsx
+│       ├── layout.jsx
+│       ├── page.jsx
+│       ├── settings
+│       │   └── page.jsx
+│       ├── subscriptions
+│       │   └── page.jsx
+│       └── users
+│           └── page.js
+├── components
+│   ├── business
+│   │   └── BusinessSidebar.jsx
+│   ├── forms
+│   │   └── LoginForm.jsx
+│   ├── layout
+│   │   ├── Navbar.jsx
+│   │   └── SuperAdminSidebar.jsx
+│   ├── modals
+│   │   └── AddBusinessModal.jsx
+│   ├── SessionWrapper.jsx
+│   ├── superadmin
+│   │   ├── AddBusinessModal.jsx
+│   │   ├── AddUserModal.jsx
+│   │   ├── AssignAdminModal.jsx
+│   │   ├── EditBusinessModal.jsx
+│   │   ├── EditSubscriptionModal.jsx
+│   │   ├── RecordPaymentModal.jsx
+│   │   └── ShowBusinessModal.jsx
+│   └── ui
+│       ├── tabs-motion.tsx
+│       └── tabs.tsx
+└── lib
+    ├── auth-guard.js
+    ├── auth.js
+    ├── db.js
+    ├── safeFetch.js
+    └── utils.js
+
+60 directories, 89 files

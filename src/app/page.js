@@ -83,7 +83,7 @@ export default async function Home() {
         A simple way to manage businesses, users and subscriptions.
       </p>
       <Link
-        href="/auth/login"
+        href="/login"
         className="mt-6 px-6 py-3 bg-black text-white rounded hover:bg-gray-900 transition"
       >
         Login

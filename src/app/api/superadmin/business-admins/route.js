@@ -6,47 +6,52 @@ export async function POST(req) {
   try {
     const { name, email, password, businessId } = await req.json();
 
-    if (!businessId) {
+    if (!businessId || !email) {
       return NextResponse.json(
-        { success: false, message: "Business ID required" },
+        { success: false, message: "Business ID and email are required" },
         { status: 400 }
       );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    let user = await prisma.user.findUnique({ where: { email } });
 
-    // 1️⃣ Create Business Admin user
-    const admin = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        role: "BUSINESS_ADMIN",
-        business: {
-          connect: { id: businessId } // Staff reference
-        }
-      }
-    });
+    // If user doesn't exist → create with role BUSINESS_ADMIN
+    if (!user) {
+      const hashedPassword = await bcrypt.hash(password || "123456", 10);
+      
+      user = await prisma.user.create({
+        data: {
+          name: name || "",
+          email,
+          password: hashedPassword,
+          role: "BUSINESS_ADMIN",
+        },
+      });
+    }
 
-    // 2️⃣ Assign User as Business Owner
+    // Ensure correct role
+    if (user.role !== "BUSINESS_ADMIN") {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { role: "BUSINESS_ADMIN" },
+      });
+    }
+
+    // Link the user to business (owner + staff)
     await prisma.business.update({
       where: { id: businessId },
       data: {
-        owner: {
-          connect: { id: admin.id }
-        },
-        users: {
-          connect: { id: admin.id }
-        }
-      }
+        ownerId: user.id,
+        users: { connect: { id: user.id } },
+      },
     });
 
-    return NextResponse.json({ success: true, admin });
+    return NextResponse.json({ success: true, user });
 
-  } catch (err) {
-    console.error("Business Admin Error:", err);
+  } catch (error) {
+    console.error(error);
     return NextResponse.json(
-      { success: false, message: err.message },
+      { success: false, message: "Failed to assign admin" },
       { status: 500 }
     );
   }

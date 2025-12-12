@@ -1,108 +1,70 @@
-// "use client";
-// import Link from "next/link";
-// import { Building2, LayoutDashboard, Users, CreditCard, Settings } from "lucide-react";
-
-// export default function SuperAdminSidebar() {
-//   const menu = [
-//     { href: "/superadmin", label: "Dashboard", icon: LayoutDashboard },
-//     { href: "/superadmin/businesses", label: "Businesses", icon: Building2 },
-//     { href: "/superadmin/subscriptions", label: "Subscriptions", icon: CreditCard },
-//     { href: "/superadmin/users", label: "Users", icon: Users },
-//     { href: "/superadmin/settings", label: "Settings", icon: Settings }
-//   ];
-
-//   return (
-//     <aside className="w-64 bg-black text-white min-h-screen p-4 space-y-6">
-//       <h1 className="text-lg font-bold">LEB-EX Admin</h1>
-
-//       <ul className="space-y-1">
-//         {menu.map(({ href, label, icon: Icon }) => (
-//           <li key={href}>
-//             <Link
-//               href={href}
-//               className="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-800 transition"
-//             >
-//               <Icon size={18} />
-//               {label}
-//             </Link>
-//           </li>
-//         ))}
-//       </ul>
-//     </aside>
-//   );
-// }
-
-
-
-
-
-
-
-
-
-
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
 import {
-  Building2,
   LayoutDashboard,
+  Store,
   Users,
   CreditCard,
+  LogOut,
   Settings,
-  LogOut
 } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 export default function SuperAdminSidebar() {
   const pathname = usePathname();
 
-  const menu = [
-    { href: "/superadmin", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/superadmin/businesses", label: "Businesses", icon: Building2 },
-    { href: "/superadmin/subscriptions", label: "Subscriptions", icon: CreditCard },
-    { href: "/superadmin/users", label: "Users", icon: Users },
-    { href: "/superadmin/settings", label: "Settings", icon: Settings }
+  const navItems = [
+    { name: "Dashboard", href: "/superadmin", icon: LayoutDashboard },
+    { name: "Businesses", href: "/superadmin/businesses", icon: Store },
+    { name: "Users", href: "/superadmin/users", icon: Users },
+    { name: "Subscriptions", href: "/superadmin/subscriptions", icon: CreditCard },
+    { title: "Settings", href: "/superadmin/settings", icon: Settings },
   ];
 
   return (
-    <aside className="w-64 bg-black text-white flex flex-col min-h-screen p-4">
-      {/* Logo / Title */}
-      <div className="text-xl font-bold mb-8 text-center tracking-wide">
-        LEB-EX Admin
+    <aside className="h-screen w-64 bg-white border-r border-gray-200 flex flex-col">
+      {/* Header */}
+      <div className="px-6 py-6 border-b border-gray-100">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          LEBEX
+        </h1>
+        <p className="text-xs text-gray-500 mt-1">Super Admin Panel</p>
       </div>
 
-      {/* Menu Links */}
-      <ul className="flex-1 space-y-1">
-        {menu.map(({ href, label, icon: Icon }) => {
-          const isActive = pathname.startsWith(href);
+      {/* Navigation */}
+      <nav className="flex-1 px-4 py-4 space-y-1">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const active = pathname === item.href;
+
           return (
-            <li key={href}>
-              <Link
-                href={href}
-                className={`flex items-center gap-3 px-4 py-2 rounded-md transition ${
-                  isActive
-                    ? "bg-white text-black font-semibold"
-                    : "hover:bg-gray-900"
-                }`}
-              >
-                <Icon size={18} />
-                {label}
-              </Link>
-            </li>
+            <Link
+              key={item.href}
+              href={item.href}
+              className={
+                active
+                  ? "flex items-center gap-3 px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white shadow"
+                  : "flex items-center gap-3 px-4 py-2 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100"
+              }
+            >
+              <Icon size={18} />
+              {item.name}
+            </Link>
           );
         })}
-      </ul>
+      </nav>
 
       {/* Logout */}
-      <button
-        onClick={() => signOut({ callbackUrl: "/auth/login" })}
-        className="flex items-center gap-3 px-4 py-2 rounded-md text-red-400 hover:bg-red-700 hover:text-white transition mt-4"
-      >
-        <LogOut size={18} />
-        Logout
-      </button>
+      <div className="p-4 border-t border-gray-200">
+        <button
+          onClick={() => signOut()}
+          className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50"
+        >
+          <LogOut size={18} /> Logout
+        </button>
+      </div>
     </aside>
   );
 }

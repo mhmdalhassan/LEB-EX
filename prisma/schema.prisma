@@ -42,7 +42,7 @@ model Business {
   owner       User?     @relation("BusinessOwner", fields: [ownerId], references: [id])
 
   users       User[]   @relation("BusinessUsers")
-
+  invoices    Invoice[]
   
   deleted Boolean @default(false)
 
@@ -54,10 +54,6 @@ model Business {
   @@unique([name])
 }
 
-
-
-
-
 enum Role {
    SUPER_ADMIN
   BUSINESS_ADMIN
@@ -65,4 +61,53 @@ enum Role {
   STOREKEEPER
   CASHIER
   DELIVERY
+}
+
+
+
+model Notification {
+  id         String   @id @default(cuid())
+  businessId String?
+  business   Business? @relation(fields: [businessId], references: [id])
+  message    String
+  type       String   // EXPIRING_SOON, EXPIRED, PAYMENT_CONFIRMED
+  createdAt  DateTime @default(now())
+  read       Boolean  @default(false)
+}
+
+
+
+
+
+model Invoice {
+  id          String        @id @default(cuid())
+  businessId  String
+  business    Business      @relation(fields: [businessId], references: [id])
+
+  amount      Float
+  method      PaymentMethod
+  period      BillingPeriod
+  paidAt      DateTime      @default(now())
+  nextDueDate DateTime
+
+  createdAt   DateTime      @default(now())
+}
+
+enum PaymentMethod {
+  CASH
+  OMT
+  WISH
+  BANK
+  OTHER
+}
+
+enum BillingPeriod {
+  MONTHLY
+  YEARLY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  SUSPENDED
+  EXPIRED
 }
