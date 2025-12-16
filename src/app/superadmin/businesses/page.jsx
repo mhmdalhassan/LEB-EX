@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { safeFetch } from "@/lib/safeFetch";
+import BusinessTable from "@/components/superadmin/tables/BusinessTable";
+import { useRouter } from "next/navigation";
+
 
 import {
   Plus,
@@ -15,17 +18,23 @@ import {
   Search,
 } from "lucide-react";
 
-import AddBusinessModal from "@/components/superadmin/AddBusinessModal";
-import AssignAdminModal from "@/components/superadmin/AssignAdminModal";
-import EditBusinessModal from "@/components/superadmin/EditBusinessModal";
-import EditSubscriptionModal from "@/components/superadmin/EditSubscriptionModal";
+import AddBusinessModal from "@/components/superadmin/modals/AddBusinessModal";
+import AssignAdminModal from "@/components/superadmin/modals/AssignAdminModal";
+import EditBusinessModal from "@/components/superadmin/modals/EditBusinessModal";
+import EditSubscriptionModal from "@/components/superadmin/modals/EditSubscriptionModal";
 
+/* ============================================================
+   Super Admin - Businesses Page
+============================================================ */
 export default function BusinessesPage() {
+  /* -------------------- State -------------------- */
+  const router = useRouter();
+
   const [businesses, setBusinesses] = useState([]);
-  const [filtered, setFiltered] = useState([]); // NEW
+  const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [search, setSearch] = useState(""); // NEW
+  const [search, setSearch] = useState("");
 
   const [showAdd, setShowAdd] = useState(false);
   const [showAssign, setShowAssign] = useState(false);
@@ -34,16 +43,15 @@ export default function BusinessesPage() {
 
   const [selectedBiz, setSelectedBiz] = useState(null);
 
-  // ============================================================
-  // Load businesses
-  // ============================================================
+  /* -------------------- Load Data -------------------- */
   const loadBusinesses = async () => {
     setLoading(true);
+
     const res = await safeFetch("/api/superadmin/businesses");
 
-    if (res.success) {
+    if (res?.success) {
       setBusinesses(res.businesses);
-      setFiltered(res.businesses); // ← Important
+      setFiltered(res.businesses);
     }
 
     setLoading(false);
@@ -53,9 +61,7 @@ export default function BusinessesPage() {
     loadBusinesses();
   }, []);
 
-  // ============================================================
-  // SEARCH FUNCTIONALITY
-  // ============================================================
+  /* -------------------- Search -------------------- */
   const handleSearch = (value) => {
     setSearch(value);
 
@@ -64,47 +70,42 @@ export default function BusinessesPage() {
       return;
     }
 
-    const lower = value.toLowerCase();
+    const q = value.toLowerCase();
 
     const results = businesses.filter((biz) => {
       return (
-        biz.name.toLowerCase().includes(lower) ||
-        biz.email.toLowerCase().includes(lower) ||
-        (biz.industry || "").toLowerCase().includes(lower) ||
-        (biz.phone || "").toLowerCase().includes(lower)
+        biz.name.toLowerCase().includes(q) ||
+        biz.email.toLowerCase().includes(q) ||
+        (biz.industry || "").toLowerCase().includes(q) ||
+        (biz.phone || "").toLowerCase().includes(q)
       );
     });
 
     setFiltered(results);
   };
 
-  // ============================================================
-  // TOGGLE STATUS
-  // ============================================================
+  /* -------------------- Actions -------------------- */
   const toggleStatus = async (id) => {
-    const res = await safeFetch(`/api/superadmin/businesses/${id}/toggle`, {
-      method: "PATCH",
-    });
+    const res = await safeFetch(
+      `/api/superadmin/businesses/${id}/toggle`,
+      { method: "PATCH" }
+    );
 
-    if (res.success) loadBusinesses();
+    if (res?.success) loadBusinesses();
   };
 
-  // ============================================================
-  // DELETE BUSINESS
-  // ============================================================
   const deleteBusiness = async (id) => {
     if (!confirm("Are you sure you want to delete this business?")) return;
 
-    const res = await safeFetch(`/api/superadmin/businesses/${id}`, {
-      method: "DELETE",
-    });
+    const res = await safeFetch(
+      `/api/superadmin/businesses/${id}`,
+      { method: "DELETE" }
+    );
 
-    if (res.success) loadBusinesses();
+    if (res?.success) loadBusinesses();
   };
 
-  // ============================================================
-  // Status Badge Component
-  // ============================================================
+  /* -------------------- Helpers -------------------- */
   const statusBadge = (active) =>
     active ? (
       <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
@@ -116,12 +117,12 @@ export default function BusinessesPage() {
       </span>
     );
 
-  // ============================================================
-  // UI
-  // ============================================================
+  /* ============================================================
+     UI
+  ============================================================ */
   return (
     <div className="space-y-8">
-      {/* HEADER SECTION */}
+      {/* ================= HEADER ================= */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
@@ -132,7 +133,7 @@ export default function BusinessesPage() {
           </p>
         </div>
 
-        {/* SEARCH BAR */}
+        {/* Search */}
         <div className="flex items-center bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 w-full max-w-sm">
           <Search size={18} className="text-gray-500" />
           <input
@@ -144,157 +145,71 @@ export default function BusinessesPage() {
           />
         </div>
 
-        {/* ADD BUSINESS BUTTON */}
+        {/* Add */}
         <button
           onClick={() => setShowAdd(true)}
-         className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
         >
           <Plus size={18} />
           Add Business
         </button>
       </div>
 
-      {/* TABLE CARD */}
+      {/* ================= TABLE CARD ================= */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-5 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-900">All Businesses</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            All Businesses
+          </h2>
           <p className="text-sm text-gray-500 mt-1">
             Showing {filtered.length} businesses
           </p>
         </div>
 
-        {/* LOADING */}
+        {/* Loading */}
         {loading && (
-          <div className="p-6 text-center text-gray-500">Loading...</div>
+          <div className="p-6 text-center text-gray-500">
+            Loading...
+          </div>
         )}
 
-        {/* NO RESULTS */}
+        {/* Empty */}
         {!loading && filtered.length === 0 && (
           <div className="p-6 text-center text-gray-500">
             No businesses found.
           </div>
         )}
 
-        {/* TABLE */}
-        {!loading && filtered.length > 0 && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-100">
-                <tr>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Business
-                  </th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Contact
-                  </th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
+        {/* Table */}
+{!loading && (
+  <BusinessTable
+    businesses={filtered}
+    loading={loading}
+    statusBadge={statusBadge}
+    onToggle={toggleStatus}
+    onDelete={deleteBusiness}
+    onAssign={(biz) => {
+      setSelectedBiz(biz);
+      setShowAssign(true);
+    }}
+    onEdit={(biz) => {
+      setSelectedBiz(biz);
+      setShowEdit(true);
+    }}
+    onSubscription={(biz) => {
+      setSelectedBiz(biz);
+      setShowSub(true);
+    }}
+    onManageUsers={(biz) => {
+      router.push(`/superadmin/businesses/${biz.id}`);
+    }}
+  />
+)}
 
-              <tbody className="divide-y divide-gray-100">
-                {filtered.map((biz) => (
-                  <tr key={biz.id} className="hover:bg-gray-50">
-                    {/* BUSINESS */}
-                    <td className="px-5 py-4">
-                      <div className="font-semibold text-gray-900">{biz.name}</div>
-                      <div className="text-xs text-gray-500">{biz.industry}</div>
-                    </td>
 
-                    {/* CONTACT */}
-                    <td className="px-5 py-4">
-                      <div className="text-gray-800">{biz.email}</div>
-                      <div className="text-xs text-gray-500">
-                        {biz.phone || "No phone"}
-                      </div>
-                    </td>
-
-                    {/* STATUS */}
-                    <td className="px-5 py-4">{statusBadge(biz.active)}</td>
-
-                    {/* ACTIONS */}
-                    <td className="px-5 py-4 text-right">
-                      <div className="flex justify-end gap-2">
-
-                        {/* TOGGLE */}
-                        <button
-                          className="p-2 rounded-lg hover:bg-gray-200"
-                          onClick={() => toggleStatus(biz.id)}
-                        >
-                          {biz.active ? (
-                            <Pause size={18} className="text-gray-600" />
-                          ) : (
-                            <Play size={18} className="text-green-600" />
-                          )}
-                        </button>
-
-                        {/* USERS */}
-                        <button
-                          onClick={() =>
-                            (window.location.href = `/superadmin/businesses/${biz.id}/users`)
-                          }
-                          className="p-2 rounded-lg hover:bg-gray-200"
-                        >
-                          <Users size={18} className="text-gray-600" />
-                        </button>
-
-                        {/* ASSIGN ADMIN */}
-                        <button
-                          onClick={() => {
-                            setSelectedBiz(biz);
-                            setShowAssign(true);
-                          }}
-                          className="p-2 rounded-lg hover:bg-gray-200"
-                        >
-                          <ShieldCheck size={18} className="text-indigo-600" />
-                        </button>
-
-                        {/* SUBSCRIPTION */}
-                        <button
-                          onClick={() => {
-                            setSelectedBiz(biz);
-                            setShowSub(true);
-                          }}
-                          className="p-2 rounded-lg hover:bg-gray-200"
-                        >
-                          <DollarSign size={18} className="text-yellow-600" />
-                        </button>
-
-                        {/* EDIT */}
-                        <button
-                          onClick={() => {
-                            setSelectedBiz(biz);
-                            setShowEdit(true);
-                          }}
-                          className="p-2 rounded-lg hover:bg-gray-200"
-                        >
-                          <Pencil size={18} className="text-blue-600" />
-                        </button>
-
-                        {/* DELETE */}
-                        <button
-                          onClick={() => deleteBusiness(biz.id)}
-                          className="p-2 rounded-lg hover:bg-red-100"
-                        >
-                          <Trash2 size={18} className="text-red-600" />
-                        </button>
-
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-
-            </table>
-          </div>
-        )}
       </div>
 
-      {/* MODALS */}
+      {/* ================= MODALS ================= */}
       <AddBusinessModal
         isOpen={showAdd}
         onClose={() => setShowAdd(false)}

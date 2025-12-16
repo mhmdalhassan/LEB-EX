@@ -8,54 +8,60 @@ datasource db {
 }
 
 model User {
-  id         String     @id @default(cuid())
-  name       String?
-  email      String     @unique
-  password   String
-  role       Role       @default(DELIVERY)
-  business   Business?  @relation("BusinessUsers", fields: [businessId], references: [id])
-  businessId String?
-  ownedBusinesses   Business[] @relation("BusinessOwner")
-  deleted   Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  active Boolean @default(true)
+  id              String         @id @default(cuid())
+  name            String?
+  email           String         @unique
+  password        String
+  role            Role           @default(DELIVERY)
+  business        Business?      @relation("BusinessUsers", fields: [businessId], references: [id])
+  businessId      String?
+  ownedBusinesses Business[]     @relation("BusinessOwner")
+  deleted         Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  active          Boolean        @default(true)
+  loginSessionId  String?
+  notifications   Notification[]
 
-  updatedAt  DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 }
 
 model Business {
-  id          String   @id @default(cuid())
-  name        String
-  industry    String
-  email       String   @unique
-  phone       String?
-  country     String
-  city        String
-  address     String
-  currency    String
-  logo        String?
-  subscriptionPrice Float? @default(0)
-  subscriptionPlan  String? @default("Basic")
-  active      Boolean  @default(true)
+  id       String  @id @default(cuid())
+  name     String
+  industry String
+  email    String  @unique
+  phone    String?
+  country  String
+  city     String
+  address  String
+  currency String
+  logo     String?
 
-  ownerId     String?
-  owner       User?     @relation("BusinessOwner", fields: [ownerId], references: [id])
+  subscriptionPrice    Float?             @default(0)
+  subscriptionPlan     String?            @default("Basic")
+  subscriptionStatus   SubscriptionStatus @default(ACTIVE)
+  defaultPaymentMethod PaymentMethod?     @default(CASH)
 
-  users       User[]   @relation("BusinessUsers")
-  invoices    Invoice[]
-  
-  deleted Boolean @default(false)
+  active Boolean @default(true)
 
- deletedAt   DateTime?  
+  ownerId String?
+  owner   User?   @relation("BusinessOwner", fields: [ownerId], references: [id])
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  users         User[]         @relation("BusinessUsers")
+  invoices      Invoice[]
+  notifications Notification[]
+
+  deleted   Boolean   @default(false)
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([name])
 }
 
 enum Role {
-   SUPER_ADMIN
+  SUPER_ADMIN
   BUSINESS_ADMIN
   ACCOUNTANT
   STOREKEEPER
@@ -63,26 +69,25 @@ enum Role {
   DELIVERY
 }
 
-
-
 model Notification {
   id         String   @id @default(cuid())
-  businessId String?
-  business   Business? @relation(fields: [businessId], references: [id])
+  title      String
   message    String
-  type       String   // EXPIRING_SOON, EXPIRED, PAYMENT_CONFIRMED
+  type       String // INFO | WARNING | ERROR | SUCCESS
+  roleTarget String // SUPER_ADMIN | BUSINESS
+  businessId String?
+  userId     String?
+  isRead     Boolean  @default(false)
   createdAt  DateTime @default(now())
-  read       Boolean  @default(false)
+
+  Business Business? @relation(fields: [businessId], references: [id])
+  User     User?     @relation(fields: [userId], references: [id])
 }
 
-
-
-
-
 model Invoice {
-  id          String        @id @default(cuid())
-  businessId  String
-  business    Business      @relation(fields: [businessId], references: [id])
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
 
   amount      Float
   method      PaymentMethod
@@ -90,7 +95,7 @@ model Invoice {
   paidAt      DateTime      @default(now())
   nextDueDate DateTime
 
-  createdAt   DateTime      @default(now())
+  createdAt DateTime @default(now())
 }
 
 enum PaymentMethod {
@@ -110,4 +115,17 @@ enum SubscriptionStatus {
   ACTIVE
   SUSPENDED
   EXPIRED
+}
+
+model PlatformSettings {
+  id                   String        @id @default("platform")
+  platformName         String        @default("LEB-EX")
+  defaultPlan          String        @default("Basic")
+  defaultMonthlyPrice  Float         @default(0)
+  defaultPaymentMethod PaymentMethod @default(CASH)
+  currency             String        @default("USD")
+  supportEmail         String?
+  maintenanceMode      Boolean       @default(false)
+
+  updatedAt DateTime @updatedAt
 }

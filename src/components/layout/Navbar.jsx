@@ -2,6 +2,8 @@
 
 import { Bell, Menu } from "lucide-react";
 import { useState } from "react";
+import NotificationBell from "@/components/notifications/NotificationBell";
+
 
 export default function Navbar({ title = "Dashboard" }) {
   const [open, setOpen] = useState(false);
@@ -30,10 +32,13 @@ export default function Navbar({ title = "Dashboard" }) {
         <div className="flex items-center gap-5">
 
           {/* Notification Button */}
-          <button className="relative p-2 rounded-full hover:bg-gray-100">
-            <Bell size={20} className="text-gray-600" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-          </button>
+
+            <NotificationBell />
+
+          {/* <button className="relative p-2 rounded-full hover:bg-gray-100">
+          <Bell size={20} className="text-gray-600" />
+          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+        </button> */}
 
           {/* User Avatar */}
           <div className="w-9 h-9 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center text-white font-medium shadow-md">

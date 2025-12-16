@@ -3,10 +3,10 @@
 import SuperAdminSidebar from "@/components/layout/SuperAdminSidebar";
 import Navbar from "@/components/layout/Navbar";
 
-export default function AdminLayoutClient({ children }) {
+export default function AdminLayoutClient({ children, settings }) {
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <SuperAdminSidebar />
+<SuperAdminSidebar settings={settings} />
       <div className="flex-1 flex flex-col">
         <Navbar title="Super Admin" />
         <main className="p-6">{children}</main>

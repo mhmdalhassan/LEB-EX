@@ -44,8 +44,15 @@ export async function GET() {
         role: {
           not: "SUPER_ADMIN",
         },
+        deleted: false, // ✅ if you have soft delete
       },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+
         business: {
           select: {
             id: true,
@@ -60,7 +67,10 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ success: true, users });
+    return NextResponse.json({
+      success: true,
+      users,
+    });
   } catch (err) {
     console.error("Users API Error:", err);
     return NextResponse.json(

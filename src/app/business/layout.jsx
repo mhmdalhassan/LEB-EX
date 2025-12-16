@@ -8,30 +8,26 @@ export default function BusinessLayout({ children }) {
   const { data: session } = useSession();
 
   return (
-    <div className="flex min-h-screen bg-slate-950">
-
+    <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
       <BusinessSidebar />
 
-      {/* Main Content Area */}
+      {/* Main Area */}
       <div className="flex-1 flex flex-col">
-
-        {/* NAVBAR */}
-        <header className="w-full bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between shadow-sm">
-          <h1 className="text-lg font-semibold text-white tracking-wide">
+        {/* Navbar */}
+        <header className="w-full bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm">
+          <h1 className="text-lg font-semibold text-gray-800 tracking-wide">
             Business Dashboard
           </h1>
 
-          {/* Right side actions */}
           <div className="flex items-center gap-5">
-
             {/* User Info */}
-            <div className="flex items-center gap-2 text-gray-300 text-sm">
+            <div className="flex items-center gap-2 text-gray-600 text-sm">
               <User size={18} />
               {session?.user?.email || "Business Admin"}
             </div>
 
-            {/* Logout Button */}
+            {/* Logout */}
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
               className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition"
@@ -42,11 +38,10 @@ export default function BusinessLayout({ children }) {
           </div>
         </header>
 
-        {/* PAGE CONTENT */}
+        {/* Page Content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">
           {children}
         </main>
-
       </div>
     </div>
   );

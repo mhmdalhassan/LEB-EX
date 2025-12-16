@@ -2,25 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Store,
-  Users,
-  CreditCard,
-  LogOut,
-  Settings,
-} from "lucide-react";
+import { Bell } from "lucide-react";
+
+import {LayoutDashboard,Store,Users,CreditCard,LogOut,Settings,} from "lucide-react";
 import { signOut } from "next-auth/react";
 
-export default function SuperAdminSidebar() {
+export default function SuperAdminSidebar({ settings }) {
   const pathname = usePathname();
+
 
   const navItems = [
     { name: "Dashboard", href: "/superadmin", icon: LayoutDashboard },
     { name: "Businesses", href: "/superadmin/businesses", icon: Store },
     { name: "Users", href: "/superadmin/users", icon: Users },
     { name: "Subscriptions", href: "/superadmin/subscriptions", icon: CreditCard },
-    { title: "Settings", href: "/superadmin/settings", icon: Settings },
+    { name: "Settings", href: "/superadmin/settings", icon: Settings },
+    {name: "Notifications",href: "/superadmin/notifications",icon: Bell,},
+
   ];
 
   return (
@@ -28,7 +26,7 @@ export default function SuperAdminSidebar() {
       {/* Header */}
       <div className="px-6 py-6 border-b border-gray-100">
         <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-          LEBEX
+{settings.platformName}
         </h1>
         <p className="text-xs text-gray-500 mt-1">Super Admin Panel</p>
       </div>

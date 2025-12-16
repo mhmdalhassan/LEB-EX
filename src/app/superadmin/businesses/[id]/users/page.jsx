@@ -4,29 +4,41 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { safeFetch } from "@/lib/safeFetch";
 import {
-  UserPlus,
-  ShieldCheck,
   UserX,
+  ShieldCheck,
   ArrowLeft,
-  Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
+
+/* ============================================================
+   Super Admin - Business Users Page
+============================================================ */
 export default function BusinessUsersPage() {
   const { id } = useParams();
+  const router = useRouter();
+
+
+  /* -------------------- State -------------------- */
   const [users, setUsers] = useState([]);
   const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  /* -------------------- Load Data -------------------- */
   const loadData = async () => {
     setLoading(true);
 
-    const usersRes = await safeFetch(`/api/superadmin/businesses/${id}/users`);
-    const bizRes = await safeFetch(`/api/superadmin/businesses`);
+    const [usersRes, bizRes] = await Promise.all([
+      safeFetch(`/api/superadmin/businesses/${id}/users`),
+      safeFetch(`/api/superadmin/businesses`),
+    ]);
 
-    if (usersRes.success) setUsers(usersRes.users || []);
+    if (usersRes?.success) {
+      setUsers(usersRes.users || []);
+    }
 
-    if (bizRes.success) {
+    if (bizRes?.success) {
       const found = bizRes.businesses.find((b) => b.id === id);
       setBusiness(found || null);
     }
@@ -38,68 +50,94 @@ export default function BusinessUsersPage() {
     loadData();
   }, [id]);
 
-  // Suspend / Activate user
-  const handleSuspend = async (userId) => {
+  /* -------------------- Actions -------------------- */
+  const toggleUserStatus = async (userId) => {
     const loadingToast = toast.loading("Updating user...");
 
-    const result = await safeFetch(
+    const res = await safeFetch(
       `/api/superadmin/businesses/${id}/users/${userId}/toggle`,
       { method: "PATCH" }
     );
 
     toast.dismiss(loadingToast);
 
-    if (!result.success) {
-      return toast.error(result.message || "Failed to update user");
+    if (!res?.success) {
+      return toast.error(res.message || "Failed to update user");
     }
 
-    toast.success(result.user.deleted ? "User Suspended" : "User Activated");
+    toast.success(
+  res.user.deleted
+    ? "User has been suspended"
+    : "User has been removed"
+);
+
+
     loadData();
   };
 
+  /* -------------------- Helpers -------------------- */
+  const roleBadge = (role) =>
+    role === "BUSINESS_ADMIN" ? (
+      <span className="px-3 py-1 bg-indigo-600 text-white text-xs rounded-full font-semibold">
+        Admin
+      </span>
+    ) : (
+      <span className="px-3 py-1 bg-gray-200 text-xs rounded-full">
+        User
+      </span>
+    );
+
+  const statusBadge = (deleted) =>
+    deleted ? (
+      <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
+        Suspended
+      </span>
+    ) : (
+      <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+        Active
+      </span>
+    );
+
+  /* ============================================================
+     UI
+  ============================================================ */
   return (
     <div className="space-y-8">
-
-      {/* Header Section */}
+      {/* ================= HEADER ================= */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             {business?.name || "Business Users"}
           </h1>
-          <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
+          <p className="text-sm text-gray-500 mt-1">
             Manage users & admin roles for this business.
           </p>
         </div>
 
-        <button
-          onClick={() => (window.location.href = "/superadmin/businesses")}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition text-sm"
-        >
-          <ArrowLeft size={16} />
-          Back
-        </button>
+       <button
+        onClick={() => router.push("/superadmin/businesses")}
+        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition text-sm"
+      >
+        <ArrowLeft size={16} />
+        Back
+      </button>
+
       </div>
 
-      {/* Users Card */}
+      {/* ================= USERS CARD ================= */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-
-        <div className="p-5 border-b border-gray-100 flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">Users</h2>
-            <p className="text-sm text-gray-500 mt-1">
-              All users linked to this business.
-            </p>
-          </div>
-
-          {/* Future: Add Admin button */}
-          {/* <button className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">
-            <UserPlus size={16} /> Add Admin
-          </button> */}
+        <div className="p-5 border-b border-gray-100">
+          <h2 className="text-lg font-semibold text-gray-900">Users</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            All users linked to this business.
+          </p>
         </div>
 
         {/* Loading */}
         {loading && (
-          <div className="p-6 text-center text-gray-500">Loading users...</div>
+          <div className="p-6 text-center text-gray-500">
+            Loading users...
+          </div>
         )}
 
         {/* Empty */}
@@ -115,16 +153,16 @@ export default function BusinessUsersPage() {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-100">
                 <tr>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
                     Email
                   </th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
                     Role
                   </th>
-                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
                     Status
                   </th>
-                  <th className="px-5 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  <th className="px-5 py-3 text-right text-xs font-semibold text-gray-600 uppercase">
                     Actions
                   </th>
                 </tr>
@@ -133,38 +171,25 @@ export default function BusinessUsersPage() {
               <tbody className="divide-y divide-gray-100">
                 {users.map((u) => (
                   <tr key={u.id} className="hover:bg-gray-50">
+                    {/* Email */}
                     <td className="px-5 py-4">{u.email}</td>
 
+                    {/* Role */}
                     <td className="px-5 py-4">
-                      {u.role === "BUSINESS_ADMIN" ? (
-                        <span className="px-3 py-1 bg-indigo-600 text-white text-xs rounded-full font-semibold">
-                          Admin
-                        </span>
-                      ) : (
-                        <span className="px-3 py-1 bg-gray-200 text-xs rounded-full">
-                          User
-                        </span>
-                      )}
+                      {roleBadge(u.role)}
                     </td>
 
+                    {/* Status */}
                     <td className="px-5 py-4">
-                      {u.deleted ? (
-                        <span className="px-3 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
-                          Suspended
-                        </span>
-                      ) : (
-                        <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-                          Active
-                        </span>
-                      )}
+                      {statusBadge(u.deleted)}
                     </td>
 
+                    {/* Actions */}
                     <td className="px-5 py-4 text-right">
                       <div className="flex justify-end gap-2">
-
                         {/* Suspend / Activate */}
                         <button
-                          onClick={() => handleSuspend(u.id)}
+                          onClick={() => toggleUserStatus(u.id)}
                           className={`p-2 rounded-lg hover:bg-gray-200 transition ${
                             u.deleted ? "text-green-600" : "text-red-600"
                           }`}
@@ -177,7 +202,8 @@ export default function BusinessUsersPage() {
                         {u.role !== "BUSINESS_ADMIN" && (
                           <button
                             onClick={() =>
-                              (window.location.href = `/superadmin/businesses/${id}?assignAdmin=true`)
+                              (window.location.href =
+                                `/superadmin/businesses/${id}?assignAdmin=true`)
                             }
                             className="p-2 rounded-lg hover:bg-gray-200 text-indigo-600 transition"
                             title="Set as Admin"
@@ -187,14 +213,12 @@ export default function BusinessUsersPage() {
                         )}
                       </div>
                     </td>
-
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         )}
-
       </div>
     </div>
   );
