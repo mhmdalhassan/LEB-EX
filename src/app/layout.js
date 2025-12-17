@@ -1,6 +1,7 @@
 import "./globals.css";
 import localFont from "next/font/local";
 import { Toaster } from "sonner";
+
 import SessionWrapper from "@/components/SessionWrapper";
 const geistSans = localFont({
   src: [

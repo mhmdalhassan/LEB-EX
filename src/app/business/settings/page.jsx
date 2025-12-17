@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { safeFetch } from "@/lib/safeFetch";
+
 import {
   Building2,
   UploadCloud,
@@ -16,40 +18,85 @@ import {
 export const dynamic = "force-dynamic";
 
 export default function BusinessSettingsPage() {
-  const [loading, setLoading] = useState(false);
-
+  /* ===============================
+     STATE
+  =============================== */
   const [businessInfo, setBusinessInfo] = useState({
     name: "",
-    category: "",
     description: "",
     phone: "",
     email: "",
     website: "",
     address: "",
     googleMapUrl: "",
-    minPrice: "",
-    maxPrice: "",
     openingTime: "",
     closingTime: "",
+    minPrice: "",
+    maxPrice: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
+  /* ===============================
+     LOAD SETTINGS
+  =============================== */
+  const loadSettings = async () => {
+    const res = await safeFetch("/api/business/settings");
+
+    if (res?.success) {
+      setBusinessInfo({
+        name: res.business.name || "",
+        description: res.business.description || "",
+        phone: res.business.phone || "",
+        email: res.business.email || "",
+        website: res.business.website || "",
+        address: res.business.address || "",
+        googleMapUrl: res.business.googleMapUrl || "",
+        openingTime: res.business.openingTime || "",
+        closingTime: res.business.closingTime || "",
+        minPrice: res.business.minPrice || "",
+        maxPrice: res.business.maxPrice || "",
+      });
+    }
+  };
+
+  /* ===============================
+     EFFECT
+  =============================== */
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  /* ===============================
+     HANDLERS
+  =============================== */
   const handleChange = (e) => {
-    setBusinessInfo({
-      ...businessInfo,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setBusinessInfo((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSave = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      alert("Business information saved successfully!");
-    }, 1000);
+
+    const res = await safeFetch("/api/business/settings", {
+      method: "PUT",
+      body: JSON.stringify(businessInfo),
+    });
+
+    setLoading(false);
+
+    if (res?.success) {
+      alert("Business settings saved successfully");
+    } else {
+      alert("Failed to save business settings");
+    }
   };
 
+
   return (
-    <div className="min-h-screen bg-slate-950 text-gray-100">
       <main className="p-4 lg:p-8 space-y-6">
         {/* HEADER */}
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-6 lg:p-8 text-white shadow-xl relative overflow-hidden">
@@ -179,7 +226,6 @@ export default function BusinessSettingsPage() {
           </div>
         </div>
       </main>
-    </div>
   );
 }
 

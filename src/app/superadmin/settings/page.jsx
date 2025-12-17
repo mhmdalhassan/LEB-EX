@@ -76,7 +76,7 @@ export default function SuperAdminSettingsPage() {
 
   /* ================== UI ================== */
   return (
-    <div className="min-h-screen bg-slate-950 text-gray-100">
+    
       <main className="p-4 lg:p-8 space-y-6">
         {/* HEADER */}
         <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 rounded-2xl p-6 lg:p-8 text-white shadow-xl">
@@ -181,7 +181,7 @@ export default function SuperAdminSettingsPage() {
           </div>
         </div>
       </main>
-    </div>
+    
   );
 }
 

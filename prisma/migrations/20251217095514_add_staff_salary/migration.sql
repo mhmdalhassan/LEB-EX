@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Staff" ADD COLUMN     "salary" DOUBLE PRECISION NOT NULL DEFAULT 0;

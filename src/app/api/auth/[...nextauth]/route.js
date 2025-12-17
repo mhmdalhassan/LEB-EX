@@ -27,18 +27,28 @@ export const authOptions = {
     }),
   ],
 
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role; // SUPER_ADMIN, BUSINESS_ADMIN, etc.
-      }
-      return token;
-    },
+ callbacks: {
+  async jwt({ token, user }) {
+    if (user) {
+      token.id = user.id;      
+      token.role = user.role;
+      token.email = user.email;
+      token.businessId = user.businessId;
 
-    async session({ session, token }) {
-      session.user.role = token.role;
-      return session;
-    },
+    }
+    return token;
+  },
+
+  async session({ session, token }) {
+    session.user.id = token.id;     
+    session.user.role = token.role;
+    session.user.email = token.email;
+        session.user.businessId = token.businessId;
+
+    return session;
+  },
+
+
 
     async redirect({ url, baseUrl }) {
       return url;

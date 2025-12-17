@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useEffect } from "react";
+import { safeFetch } from "@/lib/safeFetch";
+
 import {
   Users,
   Plus,
@@ -34,65 +37,102 @@ export default function StaffPage() {
     "Service Provider",
   ];
 
-  const [staff, setStaff] = useState([
-    {
-      id: 1,
-      name: "Omar Khaled",
-      email: "omar@example.com",
-      phone: "+96170123456",
-      role: "Cashier",
-      active: true,
-    },
-    {
-      id: 2,
-      name: "Rana Hassan",
-      email: "rana@example.com",
-      phone: "+96171123456",
-      role: "Inventory Manager",
-      active: true,
-    },
-    {
-      id: 3,
-      name: "Ali Ahmad",
-      email: "ali@example.com",
-      phone: "+96176123456",
-      role: "Delivery",
-      active: false,
-    },
-  ]);
+  const [staff, setStaff] = useState([]);
+  const [loading, setLoading] = useState(true);
+
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
     role: "Cashier",
+    salary: "",
   });
 
-  const handleAdd = () => {
-    setStaff([...staff, { ...form, id: Date.now(), active: true }]);
-    setShowAdd(false);
-    setForm({ name: "", email: "", phone: "", role: "Cashier" });
-  };
 
-  const handleEdit = () => {
-    setStaff(
-      staff.map((s) => (s.id === selectedStaff.id ? { ...selectedStaff } : s))
-    );
+  const loadStaff = async () => {
+  setLoading(true);
+  const res = await safeFetch("/api/business/staff");
+  if (res?.success) {
+    setStaff(res.staff || []);
+  }
+  setLoading(false);
+};
+
+useEffect(() => {
+  loadStaff();
+}, []);
+
+
+ const handleAdd = async () => {
+  const res = await safeFetch("/api/business/staff", {
+    method: "POST",
+    body: JSON.stringify(form),
+  });
+
+  if (res?.success) {
+    await loadStaff();
+    setShowAdd(false);
+    setForm({ name: "", email: "", phone: "", role: "Cashier", salary: "",  });
+  }
+};
+
+
+ const handleEdit = async () => {
+  if (!selectedStaff) return;
+
+  const res = await safeFetch(`/api/business/staff/${selectedStaff.id}`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      name: selectedStaff.name,
+      email: selectedStaff.email,
+      phone: selectedStaff.phone,
+      role: selectedStaff.role,
+    }),
+  });
+
+  if (res?.success) {
+    await loadStaff();
     setShowEdit(false);
     setSelectedStaff(null);
-  };
+  }
+};
 
-  const handleDelete = (id) => {
-    setStaff(staff.filter((s) => s.id !== id));
-  };
 
-  const handleResetPassword = () => {
-    alert("Password reset link sent to staff email!");
-    setShowReset(false);
-  };
+
+  const handleDelete = async (id) => {
+  if (!confirm("Delete this staff member?")) return;
+
+  const res = await safeFetch(`/api/business/staff/${id}`, {
+    method: "DELETE",
+  });
+
+  if (res?.success) {
+    await loadStaff();
+  }
+};
+
+
+  const handleResetPassword = async () => {
+  if (!selectedStaff) return;
+
+  await safeFetch(
+    `/api/business/staff/${selectedStaff.id}/reset-password`,
+    { method: "POST" }
+  );
+
+  setShowReset(false);
+  setSelectedStaff(null);
+};
+
+
+if (loading) {
+  return <main className="p-4 lg:p-8">Loading staff...</main>;
+}
+
+
 
   return (
-    <div className="min-h-screen bg-slate-950 text-gray-100">
       <main className="p-4 lg:p-8 space-y-6">
         {/* HEADER */}
         <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl p-6 lg:p-8 text-white shadow-xl relative overflow-hidden">
@@ -134,6 +174,7 @@ export default function StaffPage() {
                 <th className="pb-3">Role</th>
                 <th className="pb-3">Phone</th>
                 <th className="pb-3">Status</th>
+                <th className="pb-3">Salary</th>
                 <th className="pb-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -162,6 +203,10 @@ export default function StaffPage() {
                   {/* Phone */}
                   <td className="py-3 text-gray-800">{member.phone}</td>
 
+                  {/* Salary  */}
+                  <td className="py-3 font-semibold">{member.salary?.toLocaleString()} </td>
+
+
                   {/* Status */}
                   <td className="py-3">
                     <span
@@ -179,7 +224,7 @@ export default function StaffPage() {
                   <td className="py-3 text-right">
                     <button
                       onClick={() => {
-                        setSelectedStaff(member);
+                        setSelectedStaff({ ...member });
                         setShowEdit(true);
                       }}
                       className="mr-3 text-blue-600 hover:text-blue-800"
@@ -189,7 +234,7 @@ export default function StaffPage() {
 
                     <button
                       onClick={() => {
-                        setSelectedStaff(member);
+                        setSelectedStaff({ ...member });
                         setShowReset(true);
                       }}
                       className="mr-3 text-purple-600 hover:text-purple-800"
@@ -243,7 +288,6 @@ export default function StaffPage() {
           />
         )}
       </main>
-    </div>
   );
 }
 
@@ -273,6 +317,17 @@ function StaffModal({ title, form, setForm, roles, onClose, onSubmit }) {
         onChange={(e) => setForm({ ...form, phone: e.target.value })}
         icon={<Phone size={16} />}
       />
+
+
+      <InputField
+        label="Monthly Salary"
+        type="number"
+        value={form.salary}
+        onChange={(e) =>
+          setForm({ ...form, salary: e.target.value })
+        }
+      />
+
 
       {/* ROLE SELECT */}
       <div>
@@ -354,7 +409,7 @@ function InputField({ label, value, onChange, icon, type = "text" }) {
 
         <input
           type={type}
-          value={value}
+          value={value ?? ""}
           onChange={onChange}
           className={`w-full bg-gray-100 text-gray-900 border border-gray-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none ${
             icon ? "pl-10" : ""

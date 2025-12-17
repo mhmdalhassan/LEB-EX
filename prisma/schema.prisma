@@ -21,41 +21,39 @@ model User {
   active          Boolean        @default(true)
   loginSessionId  String?
   notifications   Notification[]
-
-  updatedAt DateTime @updatedAt
+  updatedAt       DateTime       @updatedAt
 }
 
 model Business {
-  id       String  @id @default(cuid())
-  name     String
-  industry String
-  email    String  @unique
-  phone    String?
-  country  String
-  city     String
-  address  String
-  currency String
-  logo     String?
-
+  id                   String             @id @default(cuid())
+  name                 String
+  industry             String
+  email                String             @unique
+  phone                String?
+  country              String
+  city                 String
+  address              String
+  currency             String
+  logo                 String?
   subscriptionPrice    Float?             @default(0)
   subscriptionPlan     String?            @default("Basic")
   subscriptionStatus   SubscriptionStatus @default(ACTIVE)
   defaultPaymentMethod PaymentMethod?     @default(CASH)
-
-  active Boolean @default(true)
-
-  ownerId String?
-  owner   User?   @relation("BusinessOwner", fields: [ownerId], references: [id])
-
-  users         User[]         @relation("BusinessUsers")
-  invoices      Invoice[]
-  notifications Notification[]
-
-  deleted   Boolean   @default(false)
-  deletedAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  active               Boolean            @default(true)
+  ownerId              String?
+  owner                User?              @relation("BusinessOwner", fields: [ownerId], references: [id])
+  users                User[]             @relation("BusinessUsers")
+  staff                Staff[]
+  product              Product[]
+  categories           Category[]
+  orders               Order[]
+  invoices             Invoice[]
+  notifications        Notification[]
+  deleted              Boolean            @default(false)
+  deletedAt            DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  staffPayments        StaffPayment[]
 
   @@unique([name])
 }
@@ -70,32 +68,48 @@ enum Role {
 }
 
 model Notification {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   title      String
   message    String
   type       String // INFO | WARNING | ERROR | SUCCESS
   roleTarget String // SUPER_ADMIN | BUSINESS
   businessId String?
   userId     String?
-  isRead     Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  isRead     Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  Business   Business? @relation(fields: [businessId], references: [id])
+  User       User?     @relation(fields: [userId], references: [id])
+}
 
-  Business Business? @relation(fields: [businessId], references: [id])
-  User     User?     @relation(fields: [userId], references: [id])
+model Staff {
+  id         String         @id @default(cuid())
+  name       String
+  email      String
+  phone      String?
+  role       String
+  active     Boolean        @default(true)
+  salary     Float          @default(0)
+  businessId String
+  business   Business       @relation(fields: [businessId], references: [id])
+  orders     Order[]
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  payments   StaffPayment[]
+
+  @@unique([email, businessId])
+  @@unique([businessId, email])
 }
 
 model Invoice {
-  id         String   @id @default(cuid())
-  businessId String
-  business   Business @relation(fields: [businessId], references: [id])
-
+  id          String        @id @default(cuid())
+  businessId  String
+  business    Business      @relation(fields: [businessId], references: [id])
   amount      Float
   method      PaymentMethod
   period      BillingPeriod
   paidAt      DateTime      @default(now())
   nextDueDate DateTime
-
-  createdAt DateTime @default(now())
+  createdAt   DateTime      @default(now())
 }
 
 enum PaymentMethod {
@@ -126,6 +140,108 @@ model PlatformSettings {
   currency             String        @default("USD")
   supportEmail         String?
   maintenanceMode      Boolean       @default(false)
+  updatedAt            DateTime      @updatedAt
+}
 
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  stock       Int         @default(0)
+  sku         String?
+  image       String?
+  active      Boolean     @default(true)
+  businessId  String
+  business    Business    @relation(fields: [businessId], references: [id])
+  orderItems  OrderItem[]
+  deleted     Boolean     @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  category    Category?   @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+   phone         String?
+  email         String?
+  website       String?
+  address       String?
+  googleMapUrl  String?
+  openingTime   String?
+  closingTime   String?
+  minPrice      Float?
+  maxPrice      Float?
+
+  @@index([businessId])
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float // price at time of order
+  createdAt DateTime @default(now())
+
+  @@unique([orderId, productId])
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  orderNumber   String
+  status        OrderStatus @default(PENDING)
+  totalAmount   Float
+  customerName  String?
+  customerPhone String?
+  customerNote  String?
+  businessId    String
+  business      Business    @relation(fields: [businessId], references: [id])
+  staffId       String?
+  staff         Staff?      @relation(fields: [staffId], references: [id])
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([businessId])
+  @@index([status])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  OUT_FOR_DELIVERY
+  COMPLETED
+  CANCELED
+}
+
+model StaffPayment {
+  id     String   @id @default(cuid())
+  amount Float
+  note   String?
+  paidAt DateTime @default(now())
+
+  staffId String
+  staff   Staff  @relation(fields: [staffId], references: [id])
+
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id         String   @id @default(cuid())
+  name       String
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id])
+
+  products Product[]
+
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([name, businessId]) // no duplicate categories per business
 }

@@ -1,6 +1,13 @@
 export async function safeFetch(url, options = {}) {
   try {
-    const res = await fetch(url, options);
+    const res = await fetch(url, {
+      ...options,
+      credentials: "include", // ✅ SEND NEXTAUTH COOKIES
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.headers || {}),
+      },
+    });
 
     if (!res.ok) {
       const msg = await res.text();
@@ -17,7 +24,6 @@ export async function safeFetch(url, options = {}) {
       success: true,
       ...json,
     };
-
   } catch (err) {
     console.error("Fetch Error:", err);
     return {
