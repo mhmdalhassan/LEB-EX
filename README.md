@@ -1,84 +1,171 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vercel/next.js/canary/examples/with-tailwindcss/public/logo.svg" width="120" alt="LEB-EX Logo">
+  <a href="#" target="_blank">
+    <img src="https://raw.githubusercontent.com/vercel/next.js/canary/examples/with-tailwindcss/public/logo.svg" width="120" alt="LEB-EX Logo">
+  </a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Next.js-16-black">
-  <img src="https://img.shields.io/badge/Prisma-ORM-blue">
-  <img src="https://img.shields.io/badge/PostgreSQL-Database-blue">
-  <img src="https://img.shields.io/badge/Status-Final_Project-success">
-  <img src="https://img.shields.io/badge/License-Educational-lightgrey">
+  <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js">
+  <img src="https://img.shields.io/badge/Prisma-ORM-blue" alt="Prisma">
+  <img src="https://img.shields.io/badge/PostgreSQL-Database-blue" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/Status-Final_Project-success" alt="Project Status">
+  <img src="https://img.shields.io/badge/License-Educational-lightgrey" alt="License">
 </p>
 
+---
+
 # 🚀 LEB-EX  
-## Marketplace & Business Management Platform
+## 🏪 Marketplace & Business Management Platform
 
-**LEB-EX** is a modern full-stack SaaS platform built as a **Final Full-Stack Project**.  
-It helps local businesses manage operations through a centralized, secure, and role-based system using modern web technologies.
+**LEB-EX** is a modern full-stack web platform designed to help local businesses manage their operations efficiently through a centralized, role-based system.  
+The platform focuses on scalability, security, and real-world business workflows.
 
 ---
 
-## 🎯 Objectives
-- Centralize business management  
-- Implement role-based access control (RBAC)  
+## 💻 Overview
+
+*LEB-EX* is built as a **Final Full-Stack Web Development Project** and simulates a real production-ready SaaS platform.
+
+### 🎯 Main Objectives
+- Centralize business management in one platform  
+- Provide role-based dashboards and permissions  
 - Improve staff and operational efficiency  
-- Use scalable, production-ready architecture  
+- Use modern, industry-relevant technologies  
 
 ---
 
-## 👥 User Roles
-- **Super Admin:** Manages the entire platform  
-- **Business Admin:** Manages own business and staff  
-- **Staff:** Accesses assigned operations  
+## 🏠 Platform Overview
+
+The platform allows businesses to operate through a secure dashboard system.
+
+### Key Highlights:
+- Centralized business dashboard  
+- Staff and role management  
+- Subscription-based access  
+- Secure authentication & authorization  
+- Clean and scalable architecture  
+
+---
+
+## 👥 User Roles & Access
+
+LEB-EX uses **Role-Based Access Control (RBAC)** to manage permissions.
+
+### Roles:
+
+1. **Super Admin**
+   - Full control over the platform  
+   - Manage all businesses and users  
+   - Control subscriptions and system settings  
+
+2. **Business Admin**
+   - Manage their own business  
+   - Add and manage staff  
+   - View dashboards and analytics  
+   - Configure business settings  
+
+3. **Staff**
+   - Access assigned tasks and operations  
+   - Limited permissions based on role  
 
 ---
 
 ## ⚙️ Core Features
-- Authentication & Authorization (NextAuth)  
-- Role-Based Access Control (RBAC)  
-- Business Dashboard & Analytics  
-- Staff Management  
-- Subscription Management  
-- Secure API Routes  
+
+- Secure authentication using **NextAuth**
+- Role-Based Access Control (RBAC)
+- Business dashboard with analytics
+- Staff management system
+- Subscription management
+- RESTful API routes
+- Clean modular architecture
 
 ---
 
 ## 🧱 System Architecture
-- **Framework:** Next.js 16 (App Router)  
-- **ORM:** Prisma  
-- **Database:** PostgreSQL  
-- **Styling:** Tailwind CSS  
 
-Built with separation of concerns and server/client components.
+LEB-EX follows modern architectural principles:
+
+- **Frontend & Backend:** Next.js 16 (App Router)
+- **API Layer:** Next.js API Routes
+- **ORM:** Prisma
+- **Database:** PostgreSQL
+- **Authentication:** NextAuth
+- **Styling:** Tailwind CSS
+
+### Architecture Principles:
+- Separation of concerns  
+- Server & Client Components  
+- Scalable and maintainable structure  
 
 ---
 
-## 🛠 Tech Stack
-Next.js · Prisma · PostgreSQL · NextAuth · Tailwind CSS · JavaScript
+## 🛠️ Technologies Used
+
+- **Next.js 16**
+- **Prisma ORM**
+- **PostgreSQL**
+- **NextAuth**
+- **Tailwind CSS**
+- **TypeScript / JavaScript**
 
 ---
 
-## 🚧 Challenges Solved
-- Prisma schema relations  
-- Authorization logic with RBAC  
-- Next.js App Router boundaries  
+## 🚧 Challenges & Solutions
+
+| Challenge | Solution |
+|---------|----------|
+| Prisma relations errors | Careful schema design |
+| Authorization complexity | Middleware-based RBAC |
+| App Router behavior | Clear server/client separation |
+| Data consistency | Prisma Studio & iterative testing |
 
 ---
 
 ## 🧪 Demo Flow
-Login → Dashboard → Staff Management → Settings
+
+The demo includes:
+1. User login & authentication  
+2. Business dashboard overview  
+3. Staff management  
+4. Business settings & permissions  
+
+---
+
+## 📸 Project Screenshots
+
+> *(Add screenshots here if needed)*
+
+/screenshots
+├── dashboard.png
+├── staff-management.png
+├── login.png
+
+
+
+---
+
+## 📈 Project Value
+
+- Solves real-world business problems  
+- Built using modern, market-relevant technologies  
+- Scalable and production-ready architecture  
+- Demonstrates strong full-stack engineering skills  
 
 ---
 
 ## 🚀 Future Enhancements
-Online payments · Notifications · Mobile app · Performance optimization
+
+- Online payment integration (Stripe / PayPal)  
+- Real-time notifications system  
+- Mobile application (React Native)  
+- Performance optimization and caching  
 
 ---
 
-## 👤 Author
-**Mohammad Al Hassan** – Full-Stack Web Developer  
+## 📂 Installation
 
----
-
-## 📄 License
-Educational & demonstration purposes only.
+```bash
+git clone https://github.com/your-username/leb-ex.git
+cd leb-ex
+npm install
