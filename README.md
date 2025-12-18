@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🚀 LEB-EX – Business Management Platform
 
-## Getting Started
+LEB-EX is a multi-tenant business management platform built to help businesses manage **staff, products, orders, and operational costs** from a modern dashboard.  
+The system follows **real-world architecture**, separating authentication users from internal business staff.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🔐 Authentication & Roles
+- Secure authentication using **NextAuth (App Router)**
+- Role-based access:
+  - Super Admin
+  - Business Admin
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 🏢 Business Dashboard
+- Overview of business performance
+- Orders, staff, products statistics
+- Recent orders list
+- **Total monthly staff cost**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 👥 Staff Management
+- Internal staff records (not login users)
+- Add, edit, delete staff
+- Assign roles (Cashier, Delivery, Inventory, etc.)
+- Set **monthly salary per staff**
+- Active / inactive staff
+- Email uniqueness per business
 
-## Learn More
+### 💰 Cost Tracking
+- Automatic aggregation of staff salaries
+- Monthly staff cost displayed on dashboard
+- Ready for profit & expense analysis
 
-To learn more about Next.js, take a look at the following resources:
+### 📦 Product Management
+- Product CRUD per business
+- Inventory-ready (stock, active status)
+- Order-safe pricing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🛒 Orders System
+- Orders linked to businesses
+- Orders assigned to staff
+- Multiple products per order
+- Historical pricing via order items
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🧠 Architecture Highlights
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **User ≠ Staff**
+  - `User` → authentication only
+  - `Staff` → internal business employees
+- Multi-tenant safe (business-scoped queries)
+- Clean Prisma relations
+- No authentication logic inside business entities
+- Scalable for POS, delivery, invoices, and payroll
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|-----|------------|
+Frontend | Next.js (App Router)
+Backend | Next.js Route Handlers
+Authentication | NextAuth (v5)
+Database | PostgreSQL
+ORM | Prisma
+Styling | Tailwind CSS
+Icons | Lucide React
+
+---
+
+## 📁 Project Structure
+
