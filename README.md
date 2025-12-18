@@ -134,9 +134,23 @@ The demo includes:
 
 ## 📸 Project Screenshots
 
-### <img width="775" height="650" alt="loginname" src="https://github.com/user-attachments/assets/b0706e1a-fbd5-405c-b536-9a7acba5ed80" />
+### Login page
+<img width="775" height="650" alt="loginname" src="https://github.com/user-attachments/assets/b0706e1a-fbd5-405c-b536-9a7acba5ed80" />
 
+### SuperAdmin Dashboard
+<img width="1279" height="648" alt="SuperadminDashboard" src="https://github.com/user-attachments/assets/a680dd57-60b3-4d32-8962-2de11c33f44c" />
 
+### BusinessAdmin Dashboard
+<img width="1297" height="636" alt="BusinessAdminDashboard" src="https://github.com/user-attachments/assets/36ea5ac1-aa55-45ac-b696-35f03048c80e" />
+
+### Subscriptions Page
+<img width="1297" height="636" alt="Subscriptions" src="https://github.com/user-attachments/assets/12204a03-16a8-4764-aa16-cb590bac45d3" />
+
+### products Page
+<img width="1297" height="646" alt="products" src="https://github.com/user-attachments/assets/52efec58-93d7-438a-90dd-249ea9dccf86" />
+
+### Settings Page
+<img width="1297" height="646" alt="setting" src="https://github.com/user-attachments/assets/b5956dfb-8724-46ab-8407-c69ab2ffca49" />
 
 
 ---
