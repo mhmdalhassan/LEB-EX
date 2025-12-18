@@ -54,7 +54,7 @@ Built with separation of concerns and server/client components.
 ---
 
 ## 🛠 Tech Stack
-Next.js · Prisma · PostgreSQL · NextAuth · Tailwind CSS · TypeScript
+Next.js · Prisma · PostgreSQL · NextAuth · Tailwind CSS · JavaScript
 
 ---
 
