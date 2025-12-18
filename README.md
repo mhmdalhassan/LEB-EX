@@ -134,12 +134,8 @@ The demo includes:
 
 ## 📸 Project Screenshots
 
-> *(Add screenshots here if needed)*
+### <img width="775" height="650" alt="loginname" src="https://github.com/user-attachments/assets/b0706e1a-fbd5-405c-b536-9a7acba5ed80" />
 
-/screenshots
-├── dashboard.png
-├── staff-management.png
-├── login.png
 
 
 
