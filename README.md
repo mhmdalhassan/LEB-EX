@@ -1,143 +1,84 @@
-# LEB-EX  
-### Full-Stack Marketplace & Business Management Platform
+<p align="center">
+  <img src="https://raw.githubusercontent.com/vercel/next.js/canary/examples/with-tailwindcss/public/logo.svg" width="120" alt="LEB-EX Logo">
+</p>
 
-LEB-EX is a modern full-stack web platform designed to help local businesses manage their operations efficiently through a centralized system.  
-It provides role-based dashboards, staff management, subscription handling, and a scalable architecture built with modern web technologies.
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-16-black">
+  <img src="https://img.shields.io/badge/Prisma-ORM-blue">
+  <img src="https://img.shields.io/badge/PostgreSQL-Database-blue">
+  <img src="https://img.shields.io/badge/Status-Final_Project-success">
+  <img src="https://img.shields.io/badge/License-Educational-lightgrey">
+</p>
 
----
+# 🚀 LEB-EX  
+## Marketplace & Business Management Platform
 
-## 📌 Project Overview
-
-- **Project Name:** LEB-EX  
-- **Type:** Final Full-Stack Web Development Project  
-- **Developer:** Mohammad Al Hassan  
-- **Role:** Full-Stack Web Developer  
-
-LEB-EX focuses on solving real-world business problems by offering a unified solution for managing businesses, staff, and system access through a secure and scalable architecture.
-
----
-
-## 🎯 Problem Statement
-
-Many local businesses struggle with:
-- Lack of centralized management systems  
-- Inefficient staff and order management  
-- No clear dashboards or analytics  
-- Traditional and manual workflows  
-
-These challenges reduce efficiency and make scaling difficult.
+**LEB-EX** is a modern full-stack SaaS platform built as a **Final Full-Stack Project**.  
+It helps local businesses manage operations through a centralized, secure, and role-based system using modern web technologies.
 
 ---
 
-## 💡 Solution
-
-LEB-EX provides:
-- A centralized business management platform  
-- Role-based dashboards for different user types  
-- Subscription-based access control  
-- Secure authentication and authorization  
-- Scalable, production-ready architecture  
+## 🎯 Objectives
+- Centralize business management  
+- Implement role-based access control (RBAC)  
+- Improve staff and operational efficiency  
+- Use scalable, production-ready architecture  
 
 ---
 
 ## 👥 User Roles
-
-The system uses **Role-Based Access Control (RBAC)**:
-
-- **Super Admin**
-  - Manages all businesses and users
-  - Controls subscriptions and platform settings
-
-- **Business Admin**
-  - Manages their own business
-  - Handles staff, dashboards, and settings
-
-- **Staff**
-  - Accesses assigned tasks and operations based on permissions
+- **Super Admin:** Manages the entire platform  
+- **Business Admin:** Manages own business and staff  
+- **Staff:** Accesses assigned operations  
 
 ---
 
 ## ⚙️ Core Features
-
-- Authentication & Authorization (NextAuth)
-- Role-Based Access Control (RBAC)
-- Business Dashboard & Analytics
-- Staff Management
-- Subscription Management
-- Secure RESTful API routes
-- Clean and modular architecture
+- Authentication & Authorization (NextAuth)  
+- Role-Based Access Control (RBAC)  
+- Business Dashboard & Analytics  
+- Staff Management  
+- Subscription Management  
+- Secure API Routes  
 
 ---
 
 ## 🧱 System Architecture
+- **Framework:** Next.js 16 (App Router)  
+- **ORM:** Prisma  
+- **Database:** PostgreSQL  
+- **Styling:** Tailwind CSS  
 
-- **Framework:** Next.js 16 (App Router)
-- **API Layer:** Next.js API Routes
-- **ORM:** Prisma
-- **Database:** PostgreSQL
-- **Authentication:** NextAuth
-- **Styling:** Tailwind CSS
-
-Architecture principles:
-- Separation of concerns  
-- Server & Client Components  
-- Scalable and maintainable structure  
+Built with separation of concerns and server/client components.
 
 ---
 
-## 🛠 Technology Stack
-
-- Next.js 16  
-- Prisma ORM  
-- PostgreSQL  
-- NextAuth  
-- Tailwind CSS  
-- TypeScript / JavaScript  
+## 🛠 Tech Stack
+Next.js · Prisma · PostgreSQL · NextAuth · Tailwind CSS · TypeScript
 
 ---
 
-## 🚧 Challenges & Solutions
-
-| Challenge | Solution |
-|---------|----------|
-| Prisma relation issues | Careful schema design |
-| Authorization complexity | Middleware-based RBAC |
-| App Router behavior | Clear server/client separation |
-| Schema consistency | Iterative testing with Prisma Studio |
+## 🚧 Challenges Solved
+- Prisma schema relations  
+- Authorization logic with RBAC  
+- Next.js App Router boundaries  
 
 ---
 
 ## 🧪 Demo Flow
-
-The demo includes:
-1. User authentication (Login)
-2. Business dashboard overview
-3. Staff management
-4. Business settings and permissions
+Login → Dashboard → Staff Management → Settings
 
 ---
 
-## 🚀 Future Improvements
-
-- Online payments integration (Stripe / PayPal)
-- Real-time notifications system
-- Mobile application (React Native)
-- Performance optimization and caching
+## 🚀 Future Enhancements
+Online payments · Notifications · Mobile app · Performance optimization
 
 ---
 
-## 📈 Project Value
-
-- Solves real-world business problems
-- Built with modern, industry-relevant technologies
-- Scalable and production-ready
-- Demonstrates strong full-stack development skills
+## 👤 Author
+**Mohammad Al Hassan** – Full-Stack Web Developer  
 
 ---
 
-## 📂 Installation
-
-```bash
-git clone https://github.com/your-username/leb-ex.git
-cd leb-ex
-npm install
+## 📄 License
+Educational & demonstration purposes only.
