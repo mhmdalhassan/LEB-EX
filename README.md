@@ -1,6 +1,6 @@
 <p align="center">
   <a href="#" target="_blank">
-    <img src="https://raw.githubusercontent.com/vercel/next.js/canary/examples/with-tailwindcss/public/logo.svg" width="120" alt="LEB-EX Logo">
+    <img src="https://raw.githubusercontent.com/vercel/next.js/canary/examples/with-tailwindcss/public/logo.svg" width="120" alt="LEB-EX">
   </a>
 </p>
 
@@ -107,7 +107,7 @@ LEB-EX follows modern architectural principles:
 - **PostgreSQL**
 - **NextAuth**
 - **Tailwind CSS**
-- **TypeScript / JavaScript**
+- **JavaScript**
 
 ---
 
